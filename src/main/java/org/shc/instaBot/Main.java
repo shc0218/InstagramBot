@@ -1,8 +1,6 @@
 package org.shc.instaBot;
 
 import com.github.instagram4j.instagram4j.IGClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 import java.io.File;
@@ -19,24 +17,25 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 
 //TIP 코드를 <b>실행</b>하려면 <shortcut actionId="Run"/>을(를) 누르거나
 // 에디터 여백에 있는 <icon src="AllIcons.Actions.Execute"/> 아이콘을 클릭하세요.
 public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
 
-        String key = "key";
-        String cityCode = "code";
-        String schoolCode = "schoolcode";;
+        String key = "9361f9c21e834ef58bec4e49db0f2a31";
+        String cityCode = "B10";
+        String schoolCode = "7010092";;
         String path = System.getProperty("user.dir") + "/";
 
-        getMeal getMeal = new getMeal();
+        GetMeal getMeal = new GetMeal(); 
+
         makeMealImage makeMealImage = new makeMealImage();
         InstagramBot instagramBot = new InstagramBot();
-        IGClient client = instagramBot.botStart("username", "password");
+        IGClient client = instagramBot.botStart("sillim_high_school_lunch", "AZswdcfr0218@#@#");
 
         try {
             Files.createDirectory(Paths.get(System.getProperty("user.dir") + "/output"));
@@ -49,38 +48,41 @@ public class Main {
         }catch (IOException e) {
             e.printStackTrace();
         };
+        Boolean isUpload = false;
         while (true) {
             LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            String dateNow = date.format(formatter);
             LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul"));
             String timenow = time.format(DateTimeFormatter.ofPattern("HH-mm-ss"));
-            Boolean isUpload = false;
-            if (date.getDayOfWeek().getValue() <= 5) {
-                if (timenow.equals("06-00-00")){
+            if (date.getDayOfWeek().getValue() == 7 || date.getDayOfWeek().getValue() <= 4) {
+                if (timenow.equals("22-00-00")){
+                    System.out.println("조건달성!");
                     if (!isUpload) {
-                        HashMap<String, ArrayList<String>> meal = getMeal.getMeal(key, cityCode, schoolCode, dateNow);
-                        makeMealImage.makeMealImage(path, "origin.jpg", date, meal.get("menu_list"), String.join(",", meal.get("allergy_list")));
-                        instagramBot.uploadFeed(
-                                client,
-                                new File(
-                                        path
-                                                + String.format("output/%s월%s일(%s).jpg",
-                                                date.getMonthValue(),
-                                                date.getDayOfMonth(),
-                                                date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
-                                ),
-                                date);
-                        isUpload = true;
+                        date = date.plusDays(1);
+                        String dateNow = date.format(formatter);
+                        System.out.println(dateNow);
+                        Map<String, ArrayList<String>> meal = getMeal.getMeal(key, cityCode, schoolCode, dateNow);
+                        if (!meal.get("menu_list").contains("오늘의 급식이 없습니다!") && !meal.get("allergy_list").contains("오늘의 급식이 없습니다!")) {
+                            makeMealImage.makeMealImage(path, "origin.jpg", date, meal.get("menu_list"), String.join(",", meal.get("allergy_list")));
+                            instagramBot.uploadFeed(
+                                    client,
+                                    new File(
+                                            path
+                                                    + String.format("output/%s월%s일(%s).jpg",
+                                                    date.getMonthValue(),
+                                                    date.getDayOfMonth(),
+                                                    date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
+                                    ),
+                                    date);
+                            isUpload = true;
+                        }
                     }
                 }
-                if (timenow.equals("06-00-01")){
+                if (timenow.equals("22-00-01")){
                     isUpload = false;
                 }
             }
 
         }
-
-
     }
 }

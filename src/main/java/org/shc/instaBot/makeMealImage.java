@@ -41,7 +41,10 @@ public class makeMealImage {
                                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
                     )
             );
-            System.out.println("이미지 생성 완료!");
+            System.out.println(String.format("%s월%s일(%s) 이미지 생성 완료!",
+                    date.getMonthValue(),
+                    date.getDayOfMonth(),
+                    date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)));
             g.dispose();
         } catch (Exception e) {
             e.printStackTrace();

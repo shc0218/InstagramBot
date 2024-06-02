@@ -1,9 +1,11 @@
 package org.shc.instaBot;
 
 import com.github.instagram4j.instagram4j.IGClient;
-import com.github.instagram4j.instagram4j.exceptions.IGLoginException;
+import com.github.instagram4j.instagram4j.requests.direct.DirectInboxRequest;
+import com.github.instagram4j.instagram4j.responses.direct.DirectInboxResponse;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -13,10 +15,9 @@ public class InstagramBot {
         try {
             IGClient client = IGClient.builder()
                     .username(username)
-                    .password(password)
-                    .login();
+                    .password(password).login();
             return client;
-        } catch (IGLoginException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;

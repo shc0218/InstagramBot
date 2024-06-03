@@ -33,11 +33,11 @@ public class Main {
         LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        GetMeal getMeal = new GetMeal(); 
+        GetMeal getMeal = new GetMeal();
 
         makeMealImage makeMealImage = new makeMealImage();
         InstagramBot instagramBot = new InstagramBot();
-        IGClient client = instagramBot.botStart("username", "password");
+        IGClient client = instagramBot.botStart("sillim_high_school_lunch", "AZswdcfr0218@#@#");
 
         try {
             Files.createDirectory(Paths.get(System.getProperty("user.dir") + "/output"));
@@ -51,8 +51,8 @@ public class Main {
         };
         Boolean isUpload = false;
         while (true) {
-        LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul"));
-        String timenow = time.format(DateTimeFormatter.ofPattern("HH-mm-ss"));
+            LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul"));
+            String timenow = time.format(DateTimeFormatter.ofPattern("HH-mm-ss"));
             date = LocalDate.now(ZoneId.of("Asia/Seoul"));
             formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             time = LocalTime.now(ZoneId.of("Asia/Seoul"));
@@ -76,7 +76,8 @@ public class Main {
                                                     date.getDayOfMonth(),
                                                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
                                     ),
-                                    date);
+                                    date
+                            );
                             instagramBot.uploadStory(
                                     client,
                                     new File(
@@ -86,7 +87,8 @@ public class Main {
                                                     date.getDayOfMonth(),
                                                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
                                     ),
-                                    date);
+                                    date
+                            );
                             isUpload = true;
                         }
                     }

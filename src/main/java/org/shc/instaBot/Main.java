@@ -37,7 +37,7 @@ public class Main {
 
         makeMealImage makeMealImage = new makeMealImage();
         InstagramBot instagramBot = new InstagramBot();
-        IGClient client = instagramBot.botStart("sillim_high_school_lunch", "AZswdcfr0218@#@#");
+        IGClient client = instagramBot.botStart("username", "password");
 
         try {
             Files.createDirectory(Paths.get(System.getProperty("user.dir") + "/output"));

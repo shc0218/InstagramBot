@@ -10,10 +10,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class makeMealImage {
-    public void makeMealImage(String path, String fileName, LocalDate date, ArrayList<String> mealMenuList, String mealAllergyList) {
+    public void makeFeedImage(String path, LocalDate date, ArrayList<String> mealMenuList, String mealAllergyList) {
         try {
-            BufferedImage image = null;
-            image = ImageIO.read(new File(path + fileName)); // 배경 파일 불러오기
+            BufferedImage image = ImageIO.read(new File(path + "feed_origin.jpg")); // 배경 파일 불러오기
             Graphics g = image.getGraphics();
             g.setColor(Color.BLACK);
             g.setFont(new Font("나눔스퀘어라운드 ExtraBold", Font.BOLD, 70));
@@ -35,13 +34,13 @@ public class makeMealImage {
                     image,
                     "jpg",
                     new File(
-                            path + String.format("/output/%s월%s일(%s).jpg",
+                            path + String.format("/output/%s월%s일(%s)-feed.jpg",
                                     date.getMonthValue(),
                                     date.getDayOfMonth(),
                                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
                     )
             );
-            System.out.println(String.format("%s월%s일(%s) 이미지 생성 완료!",
+            System.out.println(String.format("%s월%s일(%s) 피드 이미지 생성 완료!",
                     date.getMonthValue(),
                     date.getDayOfMonth(),
                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)));
@@ -50,4 +49,44 @@ public class makeMealImage {
             e.printStackTrace();
         }
     }
+    public void makeStoryImage(String path, LocalDate date, ArrayList<String> mealMenuList, String mealAllergyList) {
+        try {
+            BufferedImage image = ImageIO.read(new File(path + "story_origin.jpg")); // 배경 파일 불러오기
+            Graphics g = image.getGraphics();
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("나눔스퀘어라운드 ExtraBold", Font.BOLD, 90));
+            g.drawString(
+                    String.format("%s월 %s일 (%s) 급식",
+                            date.getMonthValue(),
+                            date.getDayOfMonth(),
+                            date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)),
+                    200,
+                    200);
+
+            g.setFont(new Font("나눔스퀘어라운드 ExtraBold", Font.PLAIN, 70));
+            for (int i = 0; i <mealMenuList.size(); i++) {
+                g.drawString(mealMenuList.get(i), 100, 600 + (100*i)); // 문자열 삽입
+            }
+            g.setFont(new Font("나눔스퀘어라운드 ExtraBold", Font.PLAIN, 30));
+            g.drawString("*알러지: " + mealAllergyList, 50, 1800); // 문자열 삽입
+            ImageIO.write(
+                    image,
+                    "jpg",
+                    new File(
+                            path + String.format("/output/%s월%s일(%s)-story.jpg",
+                                    date.getMonthValue(),
+                                    date.getDayOfMonth(),
+                                    date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
+                    )
+            );
+            System.out.println(String.format("%s월%s일(%s) 스토리 이미지 생성 완료!",
+                    date.getMonthValue(),
+                    date.getDayOfMonth(),
+                    date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)));
+            g.dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

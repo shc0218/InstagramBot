@@ -30,6 +30,8 @@ public class Main {
         String cityCode = "B10";
         String schoolCode = "7010092";;
         String path = System.getProperty("user.dir") + "/";
+        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
         GetMeal getMeal = new GetMeal(); 
 
@@ -40,7 +42,6 @@ public class Main {
         try {
             Files.createDirectory(Paths.get(System.getProperty("user.dir") + "/output"));
             System.out.println(Paths.get(System.getProperty("user.dir") + "/output") + " 디렉토리가 생성되었습니다.");
-            System.exit(0);
         } catch (FileAlreadyExistsException e) {
             System.out.println("");
         } catch (NoSuchFileException e) {
@@ -50,25 +51,37 @@ public class Main {
         };
         Boolean isUpload = false;
         while (true) {
-            LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul"));
-            String timenow = time.format(DateTimeFormatter.ofPattern("HH-mm-ss"));
+        LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul"));
+        String timenow = time.format(DateTimeFormatter.ofPattern("HH-mm-ss"));
+            date = LocalDate.now(ZoneId.of("Asia/Seoul"));
+            formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            time = LocalTime.now(ZoneId.of("Asia/Seoul"));
+            timenow = time.format(DateTimeFormatter.ofPattern("HH-mm-ss"));
             if (date.getDayOfWeek().getValue() == 7 || date.getDayOfWeek().getValue() <= 4) {
                 if (timenow.equals("22-00-00")){
-                    System.out.println("조건달성!");
                     if (!isUpload) {
                         date = date.plusDays(1);
                         String dateNow = date.format(formatter);
                         System.out.println(dateNow);
                         Map<String, ArrayList<String>> meal = getMeal.getMeal(key, cityCode, schoolCode, dateNow);
                         if (!meal.get("menu_list").contains("오늘의 급식이 없습니다!") && !meal.get("allergy_list").contains("오늘의 급식이 없습니다!")) {
-                            makeMealImage.makeMealImage(path, "origin.jpg", date, meal.get("menu_list"), String.join(",", meal.get("allergy_list")));
+                            makeMealImage.makeFeedImage(path, date, meal.get("menu_list"), String.join(",", meal.get("allergy_list")));
+                            makeMealImage.makeStoryImage(path, date, meal.get("menu_list"), String.join(",", meal.get("allergy_list")));
                             instagramBot.uploadFeed(
                                     client,
                                     new File(
                                             path
-                                                    + String.format("output/%s월%s일(%s).jpg",
+                                                    + String.format("output/%s월%s일(%s)-feed.jpg",
+                                                    date.getMonthValue(),
+                                                    date.getDayOfMonth(),
+                                                    date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
+                                    ),
+                                    date);
+                            instagramBot.uploadStory(
+                                    client,
+                                    new File(
+                                            path
+                                                    + String.format("output/%s월%s일(%s)-story.jpg",
                                                     date.getMonthValue(),
                                                     date.getDayOfMonth(),
                                                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA))
@@ -82,7 +95,6 @@ public class Main {
                     isUpload = false;
                 }
             }
-
         }
     }
 }

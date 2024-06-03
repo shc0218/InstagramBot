@@ -27,14 +27,25 @@ public class InstagramBot {
                 .uploadPhoto(file, String.format("#신림고#%s월%s일#급식", date.getMonthValue(),date.getDayOfMonth()))
                 .thenAccept(response -> {
                     System.out.println(
-                            String.format("%s월%s일(%s) 급식 업로드 완료",
+                            String.format("%s월%s일(%s) 급식 게시물 업로드 완료",
                                     date.getMonthValue(),
                                     date.getDayOfMonth(),
                                     date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
                             ));
                 })
-                .exceptionally(tr -> {
-                    return null;
+                .join();
+    }
+
+    public void uploadStory(IGClient client, File file, LocalDate date) {
+        client.actions().story()
+                .uploadPhoto(file)
+                .thenAccept(response -> {
+                    System.out.println(
+                            String.format("%s월%s일(%s) 급식 스토리 업로드 완료",
+                                    date.getMonthValue(),
+                                    date.getDayOfMonth(),
+                                    date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
+                            ));
                 })
                 .join();
     }
